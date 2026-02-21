@@ -1,18 +1,22 @@
 package ginrestaurant
 
 import (
+	"golang-learning/common"
+	"golang-learning/component/appctx"
 	restaurantbiz "golang-learning/module/restaurant/biz"
 	restaurantstorage "golang-learning/module/restaurant/storage"
 
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	restaurantmodel "golang-learning/module/restaurant/model"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func CreateRestaurant(db *gorm.DB) gin.HandlerFunc {
+func CreateRestaurant(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		db := appCtx.GetMainDbConnection()
+
 		var data restaurantmodel.RestaurantCreate
 
 		if err := c.ShouldBind(&data); err != nil {
@@ -28,6 +32,6 @@ func CreateRestaurant(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": data})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 	}
 }
